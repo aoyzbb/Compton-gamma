@@ -11,6 +11,8 @@
 <!ENTITY OptC6F14 SYSTEM "./Material/Predefined/Opticals/lists/OptC6F14.xml">
 <!ENTITY OptQuartz SYSTEM "./Material/Predefined/Opticals/lists/OptQuartz.xml">
 <!ENTITY ScinPolyethylene SYSTEM "./Material/Predefined/Scintillator/lists/ScinPolyethylene.xml">
+
+<!ENTITY ScinCsI SYSTEM "./Material/Predefined/Scintillator/lists/ScinCsI.xml">
 ]>
 <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
 
@@ -21,6 +23,7 @@
     &OptC6F14;
     &OptArGasMix;
 	&ScinPolyethylene;
+	&ScinCsI;
 
 	<define>
 		<!-- CsI -->
@@ -32,7 +35,7 @@
 
 		<matrix name="REFLECTIVITY" coldim="2" values="1.65*eV 1.0" />
 		<matrix name="TRANSMITTANCE" coldim="2" values="1.65*eV 0.0" />
-		<matrix name="EFFICIENCY" coldim="2" values="1.65*eV 0.0" />
+		<matrix name="EFFICIENCY" coldim="2" values="1.65*eV 1.0" />
 		<matrix name="SURFACEROUGHNESS" coldim="1" values="0.01" />
 		<matrix name="SPECULARLOBECONSTANT" coldim="2" values="1.65*eV 0.0" />
 		<matrix name="SPECULARSPIKECONSTANT" coldim="2" values="1.65*eV 0.0" />
@@ -53,6 +56,8 @@
 			<property name="SPECULARSPIKECONSTANT" ref="SPECULARSPIKECONSTANT" />
 			<property name="BACKSCATTERCONSTANT" ref="BACKSCATTERCONSTANT" />
 		</opticalsurface>
+
+	<tube lunit="mm" name="MagTube" rmin="0" rmax="1200" z="1500" deltaphi="360" />
 	</solids>
 	<!--
 	<solids>
@@ -64,7 +69,7 @@
 -->
 	<structure>
 		<volume name="CsIBoxVol">
-			<materialref ref="CsI" />
+			<materialref ref="ScinCsI" />
 			<solidref ref="CsIBox" />
 			<auxiliary auxtype="setColor" auxvalue="kYellow" auxunit="-4" />
 		</volume>

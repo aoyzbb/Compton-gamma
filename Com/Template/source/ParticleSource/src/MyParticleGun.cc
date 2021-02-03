@@ -40,7 +40,7 @@ MyParticleGun::MyParticleGun()
     G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
 
     fParticleGun->SetParticleDefinition(particle);
-    fParticleGun->SetParticleEnergy(60* keV);
+    fParticleGun->SetParticleEnergy(356* keV);
     fParticleGun->SetParticlePosition(G4ThreeVector(0, 0, -20));
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0.0, 1.0));
 

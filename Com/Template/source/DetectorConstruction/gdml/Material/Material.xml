@@ -15,12 +15,17 @@
 		混合气密度计算：设两种物质密度分别为ρ1、ρ2，体积混合比分别为a%、b%，混合体积为V，则M1=ρ1*V*a%，M2=ρ2*V*b%，混合密度ρ=(M1+M2)/V=ρ1a%+ρ2b%
 		             此时体积混合比的比例要换为质量比例： ρ1*a% : ρ2*b% 
 -->
+<define>
+<matrix name="Vacuum_RINDEX" coldim="2" values="
+        7.00*eV      1" />
+</define>
 
 <materials>
 
 	<!-- Material -->
 	<!-- Common Gas   -->
 	<material name="Vacuum" Z="1">
+		<property name="RINDEX" ref="Vacuum_RINDEX" />
 		<D unit="g/cm3" value="9.9999999999999998e-17" />
 		<atom unit="g/mole" value="1.008" />
 	</material>

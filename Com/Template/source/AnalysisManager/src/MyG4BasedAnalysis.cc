@@ -88,7 +88,7 @@ void MyG4BasedAnalysis::BeginOfRunAction()
     //
     analysisManager->SetFirstNtupleId(1);
 
-    analysisManager->CreateNtuple("Charged", "Hits"); // ntuple Id = 1
+    analysisManager->CreateNtuple("TrackCom", "Hits"); // ntuple Id = 1
     analysisManager->CreateNtupleDColumn("X");
     analysisManager->CreateNtupleDColumn("Y");
     analysisManager->CreateNtupleDColumn("Z");
@@ -447,11 +447,11 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
     G4ProcessType proType = postStepPoint->GetProcessDefinedStep()->GetProcessType();
     G4int proSubType = postStepPoint->GetProcessDefinedStep()->GetProcessSubType();
 
-    //Ntuple1: 保存次级粒子中带电粒子信息
-    if (parentID != 0 && charge != 0)
+    //Ntuple1: 保存scatter angle
+    if (parentID == 0 )
     {
-        //if (aTrack->GetTrackStatus() != fStopAndKill) //只要track停止时的信息
-        //    return;
+        if (aTrack->GetTrackStatus() != fStopAndKill) //只要track停止时的信息
+          return;
 
         //G4cout << "==>"<<proName << G4endl;
         //if (proName != "eIoni") //只要电离过程
