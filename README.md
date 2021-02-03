@@ -1,4 +1,4 @@
-## 许可证(lisence)
+## 许可证(license)
 
 本项目涉及的模板的源代码来自[riyiory_qian](https://gitee.com/royiori-qian/G4Study.git)
 
