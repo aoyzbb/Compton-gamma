@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+<!-- Arrangement as only one copy -->
+
+<!DOCTYPE gdml [
+    <!ENTITY Element SYSTEM "./Material/Predefined/Element.xml">
+    <!ENTITY Materials SYSTEM "./Material/Material.xml">
+
+    <!-- check ./Material/Predefined/Opticals/optMaterials.xml -->
+    <!ENTITY OptArGasMix SYSTEM "./Material/Predefined/Opticals/lists/OptArGasMix.xml">
+    <!ENTITY OptC6F14 SYSTEM "./Material/Predefined/Opticals/lists/OptC6F14.xml">
+    <!ENTITY OptQuartz SYSTEM "./Material/Predefined/Opticals/lists/OptQuartz.xml">
+	 <!ENTITY ScinPolyethylene SYSTEM "./Material/Predefined/Scintillator/lists/ScinPolyethylene.xml">
+]>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+    <!--materials-->
+    &Element;
+    &Materials;
+    &OptQuartz;
+    &OptC6F14;
+    &OptArGasMix;
+	&ScinPolyethylene;
+
+	<define>
+		<!-- Graphite box -->
+		<variable name="GraX" value="440" />
+		<variable name="GraY" value="440" />
+		<variable name="GraZ" value="265.6" />
+
+		<!-- Borated box -->
+		<variable name="BoraX" value="500" />
+		<variable name="BoraY" value="500" />
+		<variable name="BoraZ" value="543" />
+
+		<!--Lead first-->
+		<variable name="Lead0_X" value="620"/>
+		<variable name="Lead0_Y" value="620"/>
+		<variable name="Lead0_Z" value="120"/>
+
+		<!--Borated2-->>
+		<variable name="Bora2_X" value="620" />
+		<variable name="Bora2_Y" value="620" />
+		<variable name="Bora2_Z" value="530" />
+
+		<!--Lead second-->
+		<variable name="Lead1_X" value="620"/>
+		<variable name="Lead1_Y" value="20"/>
+		<variable name="Lead1_Z" value="450"/>
+		<variable name="Bora3_Z" value="80"/>
+
+		<!--scitillator-->
+		<variable name="SciPlaX" value="620"/>
+		<variable name="SciPlaY" value="580"/>
+		<variable name="SciPlaZ" value="450"/>
+
+		<!-- Borated box 4 -->
+		<variable name="Bora4_X" value="420" />
+		<variable name="Bora4_Y" value="420" />
+		<variable name="Bora4_Z" value="380" />
+
+		<!--Lead  third-->
+		<variable name="Lead3_X" value="260"/>
+		<variable name="Lead3_Y" value="260"/>
+		<variable name="Lead3_Z" value="290"/>
+
+		<!-- Borated box 5 -->
+		<variable name="Bora5_X" value="220" />
+		<variable name="Bora5_Y" value="220" />
+		<variable name="Bora5_Z" value="250" />
+
+		<!--Core Detector -->
+		<variable name="DetecX" value="180" />
+		<variable name="DetecY" value="180" />
+		<variable name="DetecZ" value="210" />
+
+		<variable name="Offset" value="0"/>
+
+		<position name="Borapos"   unit="mm"  x="0" y="0 " z="Offset+BoraZ/2+GraZ/2"/>
+		<position name="Grapos"  unit="mm"  x="0"  y="0" z="Offset"/>
+		<position name="Lead0_pos"  unit="mm"  x="0"  y="0" z="Offset+BoraZ+GraZ/2+Lead0_Z/2"/>
+		<position name="Bora2_pos"  unit="mm"  x="0"  y="0" z="Offset+BoraZ+GraZ/2+Lead0_Z+Bora2_Z/2"/>
+		<position name="Lead1_pos"  unit="mm"  x="0"  y="Bora2_Y/2-Lead1_Y/2" z="Bora3_Z+Lead1_Z/2-Bora2_Z/2"/>
+		<position name="Lead2_pos"  unit="mm"  x="0"  y="-Bora2_Y/2+Lead1_Y/2" z="Bora3_Z+Lead1_Z/2-Bora2_Z/2"/>
+		<position name="SciPlapos"  unit="mm"  x="0"  y="0" z="Bora3_Z+SciPlaZ/2-Bora2_Z/2"/>
+		<position name="Bora4_pos"  unit="mm"  x="0"  y="0" z="Bora4_Z/2-SciPlaZ/2"/>
+		<position name="Lead3_pos"  unit="mm"  x="0"  y="0" z="-Bora4_Z/2+Lead3_Z/2"/>
+		<position name="Bora5_pos"  unit="mm"  x="0"  y="0" z="0"/>
+		<position name="Detecpos"  unit="mm"  x="0"  y="0" z="0"/>
+	</define>
+
+	<solids>
+		<box lunit="mm" name="world" x="100000" y="100000" z="100000" />
+		<box lunit="mm" name="GraBox" x="GraX" y="GraY" z="GraZ" />
+		<box lunit="mm" name="BoraBox" x="BoraX" y="BoraY" z="BoraZ" />
+		<box lunit="mm" name="Lead0_Box" x="Lead0_X" y="Lead0_Y" z="Lead0_Z" />
+		<box lunit="mm" name="Bora2_Box" x="Bora2_X" y="Bora2_Y" z="Bora2_Z" />
+		<box lunit="mm" name="Lead1_Box" x="Lead1_X" y="Lead1_Y" z="Lead1_Z" />
+		<box lunit="mm" name="SciPlaBox" x="SciPlaX" y="SciPlaY" z="SciPlaZ" />
+		<box lunit="mm" name="Bora4_Box" x="Bora4_X" y="Bora4_Y" z="Bora4_Z" />
+		<box lunit="mm" name="Lead3_Box" x="Lead3_X" y="Lead3_Y" z="Lead3_Z" />
+		<box lunit="mm" name="Bora5_Box" x="Bora5_X" y="Bora5_Y" z="Bora5_Z" />
+		<box lunit="mm" name="DetecBox" x="DetecX" y="DetecY" z="DetecZ" />
+	</solids>
+<!--
+	<solids>
+		<box lunit="mm" name="world" x="10000" y="10000" z="10000" />
+		<box lunit="mm" name="GraBox" x="400" y="440" z="265" />
+		<box lunit="mm" name="BoraBox" x="500" y="500" z="543" />
+		
+	</solids>
+-->
+	<structure>
+		
+		<volume name="GraBoxVol">
+			<materialref ref="Graphite" />
+			<solidref ref="GraBox" />
+			  <auxiliary auxtype="setColor" auxvalue="kYellow" auxunit="2" />
+		</volume>
+
+		<volume name="BoraBoxVol">
+			<materialref ref="BoratedPoly" />
+			<solidref ref="BoraBox" />
+			 <auxiliary auxtype="setColor" auxvalue="kRed" auxunit="2" />
+		</volume>
+		
+		<volume name="Lead0_BoxVol">
+			<materialref ref="Lead" />
+			<solidref ref="Lead0_Box" />
+			 <auxiliary auxtype="setColor" auxvalue="kBlue" auxunit="-4" />
+		</volume>
+
+		<volume name="Lead1_BoxVol">
+			<materialref ref="Lead" />
+			<solidref ref="Lead1_Box" />
+			 <auxiliary auxtype="setColor" auxvalue="kBlue" auxunit="-4" />
+		</volume>
+
+		<volume name="DetecBoxVol">
+			<materialref ref="Water" />
+			<solidref ref="DetecBox" />
+			 <auxiliary auxtype="setColor" auxvalue="kYellow" auxunit="-4" />
+		</volume>
+
+		<volume name="Bora5_BoxVol">
+			<materialref ref="BoratedPoly" />
+			<solidref ref="Bora5_Box" />
+			 <auxiliary auxtype="setColor" auxvalue="kRed" auxunit="2" />
+			 
+			 <physvol name="DetecLog">
+                <volumeref ref="DetecBoxVol" />
+                <positionref ref="Detecpos"/>
+            </physvol>
+			
+		</volume>
+
+
+		<volume name="Lead3_BoxVol">
+			<materialref ref="Lead" />
+			<solidref ref="Lead3_Box" />
+			 <auxiliary auxtype="setColor" auxvalue="kBlue" auxunit="-4" />
+
+			  <physvol name="Bora5_Log">
+                <volumeref ref="Bora5_BoxVol" />
+                <positionref ref="Bora5_pos"/>
+            </physvol>
+			
+		</volume>
+
+
+		<volume name="Bora4_BoxVol">
+			<materialref ref="BoratedPoly" />
+			<solidref ref="Bora4_Box" />
+			 <auxiliary auxtype="setColor" auxvalue="kRed" auxunit="2" />
+			 
+			 <physvol name="Lead3_Log">
+                <volumeref ref="Lead3_BoxVol" />
+                <positionref ref="Lead3_pos"/>
+            </physvol>
+
+		</volume>
+
+
+		<volume name="SciPlaBoxVol">
+			<materialref ref="ScinPolyethylene" />
+			<solidref ref="SciPlaBox" />
+			 <auxiliary auxtype="setColor" auxvalue="kGreen" auxunit="2" />
+			
+			<physvol name="Bora4_Log">
+                <volumeref ref="Bora4_BoxVol" />
+                <positionref ref="Bora4_pos"/>
+            </physvol>
+
+		</volume>
+
+			
+		<volume name="Bora2_BoxVol">
+			<materialref ref="BoratedPoly" />
+			<solidref ref="Bora2_Box" />
+			 <auxiliary auxtype="setColor" auxvalue="kRed" auxunit="2" />
+			
+			<physvol name="Lead1_Log">
+                <volumeref ref="Lead1_BoxVol" />
+                <positionref ref="Lead1_pos"/>
+            </physvol>
+
+			<physvol name="Lead2_Log">
+                <volumeref ref="Lead1_BoxVol" />
+                <positionref ref="Lead2_pos"/>
+            </physvol>
+
+			<physvol name="SciPlaLog">
+                <volumeref ref="SciPlaBoxVol" />
+                <positionref ref="SciPlapos"/>
+            </physvol>
+
+		</volume>
+
+
+<volume name="World">
+            <materialref ref="Water" />
+            <solidref ref="world" />            
+
+            <physvol name="BoraBoxLog">
+                <volumeref ref="BoraBoxVol" />
+                <positionref ref="Borapos" />
+            </physvol>
+
+			<physvol name="GraBoxLog">
+                <volumeref ref="GraBoxVol" />
+                <positionref ref="Grapos"/>
+            </physvol>
+
+	<physvol name="Lead0_Log">
+                <volumeref ref="Lead0_BoxVol" />
+                <positionref ref="Lead0_pos"/>
+            </physvol>
+    
+
+			<physvol name="Bora2_BoxLog">
+                <volumeref ref="Bora2_BoxVol" />
+                <positionref ref="Bora2_pos" />
+            </physvol>
+		</volume>
+	</structure>
+
+	<setup version="1.0" name="Default">
+		<world ref="World" />
+	</setup>
+
+</gdml>

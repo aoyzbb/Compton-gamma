@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+<!-- Arrangement as only one copy -->
+
+<!DOCTYPE gdml [
+    <!ENTITY Element SYSTEM "./Material/Predefined/Element.xml">
+<!ENTITY Materials SYSTEM "./Material/Material.xml">
+
+<!-- check ./Material/Predefined/Opticals/optMaterials.xml -->
+<!ENTITY OptArGasMix SYSTEM "./Material/Predefined/Opticals/lists/OptArGasMix.xml">
+<!ENTITY OptC6F14 SYSTEM "./Material/Predefined/Opticals/lists/OptC6F14.xml">
+<!ENTITY OptQuartz SYSTEM "./Material/Predefined/Opticals/lists/OptQuartz.xml">
+<!ENTITY ScinPolyethylene SYSTEM "./Material/Predefined/Scintillator/lists/ScinPolyethylene.xml">
+]>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+	<!--materials-->
+   &Element;
+    &Materials;
+    &OptQuartz;
+    &OptC6F14;
+    &OptArGasMix;
+	&ScinPolyethylene;
+
+	<define>
+		<!-- CsI -->
+		<variable name="CsIX" value="22" />
+		<variable name="CsIY" value="20" />
+		<variable name="CsIZ" value="15" />
+		<position name="CsIpos" unit="mm" x="0" y="0" z="0"/>
+
+
+		<matrix name="REFLECTIVITY" coldim="2" values="1.65*eV 1.0" />
+		<matrix name="TRANSMITTANCE" coldim="2" values="1.65*eV 0.0" />
+		<matrix name="EFFICIENCY" coldim="2" values="1.65*eV 0.0" />
+		<matrix name="SURFACEROUGHNESS" coldim="1" values="0.01" />
+		<matrix name="SPECULARLOBECONSTANT" coldim="2" values="1.65*eV 0.0" />
+		<matrix name="SPECULARSPIKECONSTANT" coldim="2" values="1.65*eV 0.0" />
+		<matrix name="BACKSCATTERCONSTANT" coldim="2" values="1.65*eV 0.0" />
+
+	</define>
+
+	<solids>
+		<box lunit="mm" name="world" x="100000" y="100000" z="100000" />
+		<box lunit="mm" name="CsIBox" x="CsIX" y="CsIY" z="CsIZ" />
+
+		<opticalsurface name="surf1" model="unified" finish="ground" type="dielectric_dielectric" value="0.5">
+			<property name="REFLECTIVITY" ref="REFLECTIVITY" />
+			<property name="TRANSMITTANCE" ref="TRANSMITTANCE" />
+			<property name="EFFICIENCY" ref="EFFICIENCY" />
+			<property name="SURFACEROUGHNESS" ref="SURFACEROUGHNESS" />
+			<property name="SPECULARLOBECONSTANT" ref="SPECULARLOBECONSTANT" />
+			<property name="SPECULARSPIKECONSTANT" ref="SPECULARSPIKECONSTANT" />
+			<property name="BACKSCATTERCONSTANT" ref="BACKSCATTERCONSTANT" />
+		</opticalsurface>
+	</solids>
+	<!--
+	<solids>
+		<box lunit="mm" name="world" x="10000" y="10000" z="10000" />
+		<box lunit="mm" name="CsIBox" x="400" y="440" z="265" />
+		<box lunit="mm" name="BoraBox" x="500" y="500" z="543" />
+		
+	</solids>
+-->
+	<structure>
+		<volume name="CsIBoxVol">
+			<materialref ref="CsI" />
+			<solidref ref="CsIBox" />
+			<auxiliary auxtype="setColor" auxvalue="kYellow" auxunit="-4" />
+		</volume>
+
+
+
+
+
+		<volume name="World">
+			<materialref ref="Vacuum" />
+			<solidref ref="world" />
+
+
+
+
+			<physvol name="CsILog">
+				<volumeref ref="CsIBoxVol" />
+				<positionref ref="CsIpos" />
+			</physvol>
+		</volume>
+
+		<skinsurface name="skinsrf1" surfaceproperty="surf1">
+		<volumeref ref="CsIBoxVol" />
+		</skinsurface>
+		
+	</structure>
+
+	<setup version="1.0" name="Default">
+		<world ref="World" />
+	</setup>
+
+</gdml>
