@@ -55,7 +55,7 @@
 	<!-- ScinLXe scintillation fast and slow time constant -->
 	<matrix name="ScinLXe_FastTimeConst" coldim="1" values="20.*ns" />
 
-	<!-- <matrix name="ScinLXe_RisingConst" coldim="1" values="???*ns" /> -->
+	<matrix name="ScinLXe_RisingConst" coldim="1" values="0.0*ns" /> <!--Arbitray--> 
 
 	<matrix name="ScinLXe_SlowTimeConst" coldim="1" values="45.00*ns" />
 

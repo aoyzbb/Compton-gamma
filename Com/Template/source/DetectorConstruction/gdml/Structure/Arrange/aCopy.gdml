@@ -11,27 +11,33 @@
 <!ENTITY OptC6F14 SYSTEM "./Material/Predefined/Opticals/lists/OptC6F14.xml">
 <!ENTITY OptQuartz SYSTEM "./Material/Predefined/Opticals/lists/OptQuartz.xml">
 <!ENTITY ScinPolyethylene SYSTEM "./Material/Predefined/Scintillator/lists/ScinPolyethylene.xml">
-
+<!ENTITY ScinLXe SYSTEM "./Material/Predefined/Scintillator/lists/ScinLXe.xml">
+<!ENTITY OptAir SYSTEM "./Material/Predefined/Opticals/lists/OptAir.xml">
 <!ENTITY ScinCsI SYSTEM "./Material/Predefined/Scintillator/lists/ScinCsI.xml">
 ]>
 <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
 
 	<!--materials-->
-   &Element;
+    &Element;
     &Materials;
     &OptQuartz;
     &OptC6F14;
     &OptArGasMix;
 	&ScinPolyethylene;
 	&ScinCsI;
+	&OptAir;
+	&ScinLXe;
 
 	<define>
 		<!-- CsI -->
-		<variable name="CsIX" value="22" />
-		<variable name="CsIY" value="20" />
-		<variable name="CsIZ" value="15" />
+		<variable name="CsIX" value="15" />
+		<variable name="CsIY" value="22" />
+		<variable name="CsIZ" value="20" />
+		<variable name="PMTX" value="15" />
+		<variable name="PMTY" value="10" />
+		<variable name="PMTZ" value="20" />
 		<position name="CsIpos" unit="mm" x="0" y="0" z="0"/>
-
+		<position name="PMTpos" unit="mm" x="0" y="CsIY/2+PMTY/2" z="0"/>
 
 		<matrix name="REFLECTIVITY" coldim="2" values="1.65*eV 1.0" />
 		<matrix name="TRANSMITTANCE" coldim="2" values="1.65*eV 0.0" />
@@ -40,13 +46,14 @@
 		<matrix name="SPECULARLOBECONSTANT" coldim="2" values="1.65*eV 0.0" />
 		<matrix name="SPECULARSPIKECONSTANT" coldim="2" values="1.65*eV 0.0" />
 		<matrix name="BACKSCATTERCONSTANT" coldim="2" values="1.65*eV 0.0" />
-
+		<matrix name="REFLECTIVITY2" coldim="2" values="1.65*eV 0.0" />
+		<matrix name="TRANSMITTANCE2" coldim="2" values="1.65*eV 1.0" />
 	</define>
 
 	<solids>
 		<box lunit="mm" name="world" x="100000" y="100000" z="100000" />
 		<box lunit="mm" name="CsIBox" x="CsIX" y="CsIY" z="CsIZ" />
-
+		<box lunit="mm" name="PMTBox" x="PMTX" y="PMTY" z="PMTZ" />
 		<opticalsurface name="surf1" model="unified" finish="ground" type="dielectric_dielectric" value="0.5">
 			<property name="REFLECTIVITY" ref="REFLECTIVITY" />
 			<property name="TRANSMITTANCE" ref="TRANSMITTANCE" />
@@ -57,7 +64,16 @@
 			<property name="BACKSCATTERCONSTANT" ref="BACKSCATTERCONSTANT" />
 		</opticalsurface>
 
-	<tube lunit="mm" name="MagTube" rmin="0" rmax="1200" z="1500" deltaphi="360" />
+		<opticalsurface name="surf2" model="unified" finish="ground" type="dielectric_dielectric" value="0.5">
+			<property name="REFLECTIVITY" ref="REFLECTIVITY2" />
+			<property name="TRANSMITTANCE" ref="TRANSMITTANCE2" />
+			<property name="EFFICIENCY" ref="EFFICIENCY" />
+			<property name="SURFACEROUGHNESS" ref="SURFACEROUGHNESS" />
+			<property name="SPECULARLOBECONSTANT" ref="SPECULARLOBECONSTANT" />
+			<property name="SPECULARSPIKECONSTANT" ref="SPECULARSPIKECONSTANT" />
+			<property name="BACKSCATTERCONSTANT" ref="BACKSCATTERCONSTANT" />
+		</opticalsurface>
+	
 	</solids>
 	<!--
 	<solids>
@@ -75,11 +91,17 @@
 		</volume>
 
 
+		<volume name="PMTBoxVol">
+			<materialref ref="Silicon" />
+			<solidref ref="PMTBox" />
+			<auxiliary auxtype="setColor" auxvalue="kRed" auxunit="-4" />
+		</volume>
+
 
 
 
 		<volume name="World">
-			<materialref ref="Vacuum" />
+			<materialref ref="OptAir" />
 			<solidref ref="world" />
 
 
@@ -89,14 +111,37 @@
 				<volumeref ref="CsIBoxVol" />
 				<positionref ref="CsIpos" />
 			</physvol>
+			<physvol name="PMTLog">
+				<volumeref ref="PMTBoxVol" />
+				<positionref ref="PMTpos" />
+			</physvol>
 		</volume>
 
 		<skinsurface name="skinsrf1" surfaceproperty="surf1">
 		<volumeref ref="CsIBoxVol" />
 		</skinsurface>
-		
+		<skinsurface name="skinsrf2" surfaceproperty="surf2">
+		<volumeref ref="PMTBoxVol" />
+		</skinsurface>
 	</structure>
 
+<!-- Exer0.0 设置入射粒子为光学光子来测试 
+    <userinfo>
+        <auxiliary auxtype="PrimaryGen" auxvalue="ParticleGun">
+            <auxiliary auxtype="particle" auxvalue="opticalphoton" />
+        
+            <auxiliary auxtype="positionX" auxvalue="0.0" auxunit="mm" />
+            <auxiliary auxtype="positionY" auxvalue="0.0" auxunit="mm" />
+            <auxiliary auxtype="positionZ" auxvalue="-50.0" auxunit="mm" />
+            <auxiliary auxtype="momentumX" auxvalue="0.0" auxunit="eV" />
+            <auxiliary auxtype="momentumY" auxvalue="0.0" auxunit="eV" />
+            <auxiliary auxtype="momentumZ" auxvalue="60.0" auxunit="keV" />
+            <auxiliary auxtype="polarizationX" auxvalue="1"/>
+            <auxiliary auxtype="polarizationY" auxvalue="0"/>
+            <auxiliary auxtype="polarizationZ" auxvalue="0"/>
+        </auxiliary>
+    </userinfo>
+-->
 	<setup version="1.0" name="Default">
 		<world ref="World" />
 	</setup>

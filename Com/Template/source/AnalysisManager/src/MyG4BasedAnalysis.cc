@@ -39,9 +39,10 @@ MyG4BasedAnalysis::MyG4BasedAnalysis()
 
     //-------
     //#ANALYSIS 1. 初始化变量
-
+    begintime = 0;
+    endtime = 0;
     fTrkLen = 0;
-    ftotaledep =0;
+    ftotaledep = 0;
     fEdeps.clear();
     fHitsX.clear();
     fHitsY.clear();
@@ -87,30 +88,19 @@ void MyG4BasedAnalysis::BeginOfRunAction()
     // Creating ntuple
     //
     analysisManager->SetFirstNtupleId(1);
-
+    // 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间  2 PMT收集光子数
     analysisManager->CreateNtuple("TrackCom", "Hits"); // ntuple Id = 1
-    analysisManager->CreateNtupleDColumn("X");
-    analysisManager->CreateNtupleDColumn("Y");
-    analysisManager->CreateNtupleDColumn("Z");
+
     analysisManager->CreateNtupleDColumn("PX");
     analysisManager->CreateNtupleDColumn("PY");
     analysisManager->CreateNtupleDColumn("PZ");
-    analysisManager->CreateNtupleDColumn("Process");
-    analysisManager->CreateNtupleDColumn("ProcessSub");
     analysisManager->CreateNtupleDColumn("PID");
     analysisManager->CreateNtupleDColumn("ParentID");
-analysisManager->FinishNtuple();
+    analysisManager->FinishNtuple();
 
     analysisManager->CreateNtuple("Neutral", "Hits"); // ntuple Id = 2
-    analysisManager->CreateNtupleDColumn("X");
-    analysisManager->CreateNtupleDColumn("Y");
-    analysisManager->CreateNtupleDColumn("Z");
-    analysisManager->CreateNtupleDColumn("PX");
-    analysisManager->CreateNtupleDColumn("PY");
-    analysisManager->CreateNtupleDColumn("PZ");
-    analysisManager->CreateNtupleDColumn("PID");
-    analysisManager->CreateNtupleDColumn("ParentID");
-analysisManager->FinishNtuple();
+    analysisManager->CreateNtupleDColumn("PMTgamma");
+    analysisManager->FinishNtuple();
 
     analysisManager->CreateNtuple("Track", "Hits"); // ntuple Id = 3
     analysisManager->CreateNtupleDColumn("TrkLen");
@@ -119,9 +109,12 @@ analysisManager->FinishNtuple();
     analysisManager->CreateNtupleDColumn("HitsY", fHitsY);
     analysisManager->CreateNtupleDColumn("HitsZ", fHitsZ);
     analysisManager->CreateNtupleDColumn("totalenergy");
-analysisManager->FinishNtuple();
-    analysisManager->CreateNtuple("NewTrk", "Hits"); // ntuple Id = 4
-    analysisManager->CreateNtupleDColumn("Eng");
+
+    analysisManager->FinishNtuple();
+    analysisManager->CreateNtuple("time", "Hits"); // ntuple Id = 4
+    analysisManager->CreateNtupleDColumn("begintime");
+    analysisManager->CreateNtupleDColumn("endtime");
+    analysisManager->CreateNtupleDColumn("travellingtime");
 
     analysisManager->FinishNtuple();
 
@@ -159,7 +152,7 @@ void MyG4BasedAnalysis::BeginOfEventAction(const G4Event *)
     //-------
     //#ANALYSIS 3. 初始化Event开始的参数
     fTrkLen = 0;
-    ftotaledep =0;
+    ftotaledep = 0;
     fEdeps.clear();
     fHitsX.clear();
     fHitsY.clear();
@@ -177,10 +170,11 @@ void MyG4BasedAnalysis::EndOfEventAction(const G4Event *)
 
     //-------
     //#ANALYSIS 5. 在Event结束的时候将数据保存到ntuple
-
+    G4cout << "the energy is " << ftotaledep << G4endl;
+    G4cout << "the track length is " << fTrkLen << G4endl;
     auto analysisManager = G4AnalysisManager::Instance();
     analysisManager->FillNtupleDColumn(3, 0, fTrkLen);
-    analysisManager->FillNtupleDColumn(3,5,ftotaledep);
+    analysisManager->FillNtupleDColumn(3, 5, ftotaledep);
     analysisManager->AddNtupleRow(3);
 
     return;
@@ -216,7 +210,23 @@ void MyG4BasedAnalysis::PreTrackingAction(const G4Track *aTrack)
 
     if (verbose)
         G4cout << "====>MyG4BasedAnalysis::PreTrackingAction()" << G4endl;
+    const G4ParticleDefinition *particle = aTrack->GetParticleDefinition();
+    G4int pdgID = particle->GetPDGEncoding();
+    G4String name = particle->GetParticleName();
+    //G4cout << "debug:the new particle is  " << name << G4endl;
+    //G4cout << "debug:the new particle's pid is  " << pdgID << G4endl;
+    begintime = aTrack->GetGlobalTime();
+    G4ThreeVector momDir = aTrack->GetMomentumDirection(); //unit vector
+    G4int parentID = aTrack->GetParentID();
+    auto analysisManager = G4AnalysisManager::Instance();
 
+    analysisManager->FillNtupleDColumn(1, 0, momDir.x());
+    analysisManager->FillNtupleDColumn(1, 1, momDir.y());
+    analysisManager->FillNtupleDColumn(1, 2, momDir.z());
+
+    analysisManager->FillNtupleDColumn(1, 3, double(pdgID));
+    analysisManager->FillNtupleDColumn(1, 4, double(parentID));
+    analysisManager->AddNtupleRow(1);
     //通常用法为：
     //  保存某类粒子的相关信息(更多的时候是母粒子的次级粒子)，如产生点位置，产生点时间，物理过程，粒子种类等。
     //  特别是衰变的粒子或打靶实验
@@ -310,7 +320,15 @@ void MyG4BasedAnalysis::PostTrackingAction(const G4Track *aTrack)
 
     //-------
     //#ANALYSIS 4.3 在Tracking终止的时候保存相应数据
-
+    endtime = aTrack->GetGlobalTime();
+    G4double timeoftrack = begintime - endtime;
+    G4cout << "the begin time is " << begintime << G4endl;
+    G4cout << "the end time is " << endtime << G4endl;
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillNtupleDColumn(4, 0, begintime);
+    analysisManager->FillNtupleDColumn(4, 1, endtime);
+    analysisManager->FillNtupleDColumn(4, 2, timeoftrack);
+    analysisManager->AddNtupleRow(4);
     return;
 }
 
@@ -447,16 +465,16 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
     G4ProcessType proType = postStepPoint->GetProcessDefinedStep()->GetProcessType();
     G4int proSubType = postStepPoint->GetProcessDefinedStep()->GetProcessSubType();
 
-    //Ntuple1: 保存scatter angle
-    if (parentID == 0 )
+    if (parentID == 0)
     {
         if (aTrack->GetTrackStatus() != fStopAndKill) //只要track停止时的信息
-          return;
+            return;
 
         //G4cout << "==>"<<proName << G4endl;
         //if (proName != "eIoni") //只要电离过程
         //    return;
 
+        /* @Ao 原模板内容 2/14
         auto analysisManager = G4AnalysisManager::Instance();
         analysisManager->FillNtupleDColumn(1, 0, postPos.x());
         analysisManager->FillNtupleDColumn(1, 1, postPos.y());
@@ -469,22 +487,26 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
         analysisManager->FillNtupleDColumn(1, 8, double(pdgID));
         analysisManager->FillNtupleDColumn(1, 9, double(parentID));
         analysisManager->AddNtupleRow(1);
+
+        */
     }
-
-    //Ntuple2: 保存中性粒子信息：
-    if (charge == 0 && (parentID == 1 && pdgID == 0)) //要求来自入射粒子，且是光子
+    auto *pVolume = postStepPoint->GetTouchableHandle()->GetVolume();
+    if (pVolume == NULL)
+        return;
+    auto *pVolume2 = preStepPoint->GetTouchableHandle()->GetVolume();
+    G4LogicalVolume *presentVolume = pVolume->GetLogicalVolume();
+    G4LogicalVolume *previousVolume = pVolume2->GetLogicalVolume();
+    //Ntuple2: 保存光子打在阳极板信息：
+    if (charge == 0 && presentVolume->GetName() == "PMTBoxVol"&&previousVolume->GetName() == "CsIBoxVol") //要求来自入射粒子，且是光子
     {
-        if (proName != "Cerenkov") //只要切伦科夫过程
-            return;
-
-        auto *pVolume = postStepPoint->GetTouchableHandle()->GetVolume();
-        if (pVolume == NULL)
-            return;
-
-        G4LogicalVolume *presentVolume = pVolume->GetLogicalVolume();
-        if (presentVolume->GetName() != "FR4BoxVol") //只要光子打到阳极板上的情况
-            return;
-
+        // if (proName != "Cerenkov") //只要切伦科夫过程
+        //   return;
+        //G4cout<<"Hi,I Hit!"<<G4endl;
+        G4double engtot = aTrack->GetTotalEnergy(); // total energy (including m0)
+        auto analysisManager = G4AnalysisManager::Instance();
+        analysisManager->FillNtupleDColumn(2, 0, engtot);
+        analysisManager->AddNtupleRow(2);
+        /*@Ao:原模板内容
         G4double optEng = 0.0012398 / aTrack->GetKineticEnergy(); //convert to [nm]
         G4double optX = postPos.x();
         G4double optY = postPos.y();
@@ -499,16 +521,18 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
         analysisManager->FillNtupleDColumn(0, 5, aTrack->GetVertexPosition().y());
         analysisManager->FillNtupleDColumn(0, 6, aTrack->GetVertexPosition().z());
         analysisManager->AddNtupleRow(2);
-    }
 
+        */
+        fKill;
+    }
+    G4double stepenergy = aStep->GetTotalEnergyDeposit();
+
+    ftotaledep += stepenergy;
     //Ntuple3: a)TrkLen在这里累加后，在EndOfEvent处保存； b)用vector来保存保存入射粒子的hit信息
     if (parentID == 0)
     {
         G4double stepLen = aStep->GetStepLength();
         fTrkLen += stepLen;
-        G4double stepenergy=aStep->GetTotalEnergyDeposit();
-
-        ftotaledep += stepenergy;
 
         fEdeps.push_back(aStep->GetTotalEnergyDeposit());
         fHitsX.push_back(postPos.x());

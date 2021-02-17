@@ -1,7 +1,7 @@
 # Macro file for the visualization setting in the initialization phase 
 # of the B1 example when running in interactive mode
 #
-/tracking/verbose 1
+/tracking/verbose 0
 # Use these open statements to open selected visualization
 #
 # Use this open statement to create an OpenGL view:
@@ -29,6 +29,8 @@
 #
 # Draw geometry:
 /vis/drawVolume
+/vis/scene/add/axes
+
 #
 # Specify view angle:
 /vis/viewer/set/viewpointVector -1 0 0
