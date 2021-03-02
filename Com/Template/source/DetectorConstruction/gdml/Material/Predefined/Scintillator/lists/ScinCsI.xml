@@ -10,8 +10,8 @@
 
          <!-- ********** Absorption length ********** -->
         <matrix name="ScinCsI_ABS" coldim="2" values="
-            2*eV       20*cm
-            3.47*eV    20*cm" />
+            2*eV       1*m
+            3.47*eV    1*m" />
 
         <!-- ********** Absorption length end ********** -->
 

@@ -1,0 +1,148 @@
+diff -rB ./include/MyPhysListEM.hh /mnt/d/Geant4project/project/geant4/Template/source/PhysicsList/include/MyPhysListEM.hh
+0a1,5
+> //*********************************************
+> //  This is Geant4 Template
+> //                                  author:Qian
+> //
+> 
+diff -rB ./include/MyPhysicsList.hh /mnt/d/Geant4project/project/geant4/Template/source/PhysicsList/include/MyPhysicsList.hh
+0a1,5
+> //*********************************************
+> //  This is Geant4 Template
+> //                                  author:Qian
+> //
+> 
+Only in ./: log.txt
+diff -rB ./src/MyPhysListEM.cc /mnt/d/Geant4project/project/geant4/Template/source/PhysicsList/src/MyPhysListEM.cc
+165c164
+<     auto aParticleIterator = GetParticleIterator();
+---
+>     G4hMultipleScattering *hmsc = new G4hMultipleScattering("ionmsc");
+166a166
+>     auto aParticleIterator = GetParticleIterator();
+182c182
+<             G4PolarizedPhotoElectricEffect* thePhotoElectricEffect = new G4PolarizedPhotoElectricEffect();
+---
+>             G4PolarizedPhotoElectricEffect *thePhotoElectricEffect = new G4PolarizedPhotoElectricEffect();
+192,193c192,193
+<             G4double LivermoreHighEnergyLimit = 1.0*GeV;
+<             G4LivermorePolarizedPhotoElectricModel* theLivermorePhotoElectricModel = new G4LivermorePolarizedPhotoElectricModel();
+---
+>             G4double LivermoreHighEnergyLimit = 1.0 * GeV;
+>             G4LivermorePolarizedPhotoElectricModel *theLivermorePhotoElectricModel = new G4LivermorePolarizedPhotoElectricModel();
+375c375
+< 			//G4PAIPhotModel *thePAIphotModel = new G4PAIPhotModel();
+---
+>             //G4PAIPhotModel *thePAIphotModel = new G4PAIPhotModel();
+623d621
+<             G4hMultipleScattering *hmsc = new G4hMultipleScattering("ionmsc");
+662d659
+<             G4hMultipleScattering *hmsc = new G4hMultipleScattering("ionmsc");
+683d679
+<     
+diff -rB ./src/MyPhysListTRD.cc /mnt/d/Geant4project/project/geant4/Template/source/PhysicsList/src/MyPhysListTRD.cc
+37a38,46
+>       //#PhysTRD 6. 选择一个TRD的物理模型.
+>       /* G4提供的TRD模型共有7种，分别为。
+>          1. "gammaR" = G4GammaXTRadiator;  "gammaM" = G4XTRGammaRadModel; 描述不规则辐射体，如泡沫/纤维等
+>          2. "regR" = G4RegularXTRadiator;  "regM" = G4XTRRegularRadModel; 描述规则辐射体
+>          3. "transpR" = G4TransparentRegXTRadiator; "transpM" = G4XTRTransparentRegRadModel; 描述吸收少的规则辐射体
+>          4. "strawR" = G4StrawTubeXTRadiator; 稻草管，需要定义三种材料：辐射体/稻草管/气体，暂时没包含在内。
+>          前三种的第一个是产生TRD并模拟光子产生的位置，不管光子的吸收，光子的吸收是通过光子的物理过程去模拟的; 
+>          前三种的第二个是产生TRD并模拟光子产生的位置，并考虑光子的吸收，给出吸收后在辐射体最后一层处还剩下的光子分布;
+>       */
+89c98
+<                                              "GammaXTRadiator");
+---
+>                                              "XTRgammaRadiator");
+100c109
+<                                                 "strawXTRadiator");
+---
+>                                                 "StrawTubeXTRadiator");
+112,122d120
+<     else if (fXTRModel == "transpR")
+<     {
+<         // G4TransparentRegXTRadiator*
+<         fXTRProcess = new G4TransparentRegXTRadiator(rDescription->fLogicalVolume,
+<                                                      rDescription->fFoilMaterial,
+<                                                      rDescription->fGasMaterial,
+<                                                      rDescription->fFoilThickness,
+<                                                      rDescription->fGasThickness,
+<                                                      rDescription->fFoilNumber,
+<                                                      "RegularXTRadiator");
+<     }
+131c129,139
+<                                                "RegularXTRadiator");
+---
+>                                                "XTRegularRadiator");
+>     }
+>     else if (fXTRModel == "transpR")
+>     {
+>         fXTRProcess = new G4TransparentRegXTRadiator(rDescription->fLogicalVolume,
+>                                                      rDescription->fFoilMaterial,
+>                                                      rDescription->fGasMaterial,
+>                                                      rDescription->fFoilThickness,
+>                                                      rDescription->fGasThickness,
+>                                                      rDescription->fFoilNumber,
+>                                                      "TransparentRegXTRadiator");
+135,143c143,149
+<         //#PhysTRD 6. 选择一个TRD的物理模型
+<         fXTRProcess = new G4XTRRegularRadModel(rDescription->fLogicalVolume,
+<                                                //fXTRProcess = new G4RegularXTRadiator(rDescription->fLogicalVolume,
+<                                                rDescription->fFoilMaterial,
+<                                                rDescription->fGasMaterial,
+<                                                rDescription->fFoilThickness,
+<                                                rDescription->fGasThickness,
+<                                                rDescription->fFoilNumber,
+<                                                "RegularXTRadiator");
+---
+>         fXTRProcess = new G4XTRTransparentRegRadModel(rDescription->fLogicalVolume,
+>                                                       rDescription->fFoilMaterial,
+>                                                       rDescription->fGasMaterial,
+>                                                       rDescription->fFoilThickness,
+>                                                       rDescription->fGasThickness,
+>                                                       rDescription->fFoilNumber,
+>                                                       "XTTransparentRegRadiator");
+diff -rB ./src/MyPhysicsList.cc /mnt/d/Geant4project/project/geant4/Template/source/PhysicsList/src/MyPhysicsList.cc
+153,154c153,154
+<     G4OpticalPhysics *opticalPhysics = new MyPhysListOp(verbose);
+<     //G4OpticalPhysics *opticalPhysics = new G4OpticalPhysics();
+---
+>     //G4OpticalPhysics *opticalPhysics = new MyPhysListOp(verbose);
+>     G4OpticalPhysics *opticalPhysics = new G4OpticalPhysics();
+157c157
+<         //opticalPhysics->Configure(kCerenkov, true); //切伦科夫
+---
+>         opticalPhysics->Configure(kCerenkov, true); //切伦科夫
+163c163
+<         //opticalPhysics->Configure(kScintillation, true); //闪烁光
+---
+>         opticalPhysics->Configure(kScintillation, true); //闪烁光
+172c172
+<         //opticalPhysics->Configure(kAbsorption, true); //吸收
+---
+>         opticalPhysics->Configure(kAbsorption, true); //吸收
+175c175
+<         //opticalPhysics->Configure(kRayleigh, true); //瑞利散射
+---
+>         opticalPhysics->Configure(kRayleigh, true); //瑞利散射
+178c178
+<         //opticalPhysics->Configure(kMieHG, true); //米氏散射
+---
+>         opticalPhysics->Configure(kMieHG, true); //米氏散射
+181c181
+<         //opticalPhysics->Configure(kBoundary, true); //边界
+---
+>         opticalPhysics->Configure(kBoundary, true); //边界
+184c184
+<         //opticalPhysics->Configure(kWLS, true); //波长位移
+---
+>         opticalPhysics->Configure(kWLS, true); //波长位移
+203c203
+<     RegisterPhysics(new G4HadronElasticPhysics(verbose));
+---
+>     //RegisterPhysics(new G4HadronElasticPhysics(verbose));
+210c210
+<     //RegisterPhysics(new G4HadronInelasticQBBC(verbose));
+---
+>     RegisterPhysics(new G4HadronInelasticQBBC(verbose));

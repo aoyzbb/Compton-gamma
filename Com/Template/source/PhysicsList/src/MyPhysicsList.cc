@@ -160,14 +160,14 @@ MyPhysicsList::MyPhysicsList(MyDetectorConstruction *det) : G4VModularPhysicsLis
         //opticalPhysics->SetTrackSecondariesFirst(kCerenkov, true); //由于切伦科夫会产生很多光子，为避免占用很多内存，此时可以设置先把产生的光子模拟完
         //opticalPhysics->SetCerenkovStackPhotons(true);
 
-        //opticalPhysics->Configure(kScintillation, true); //闪烁光
-        //opticalPhysics->SetScintillationYieldFactor(1.0); //这里是覆盖掉闪烁体材料定义里的YieldRatio。这个参数表示光产额里快成分占总光产额的比例。对于alpha重粒子和gamma/电子来说，这个比例会不一样。
-        //opticalPhysics->SetScintillationExcitationRatio(0.0); //这个参数表示光产额里快成分激发占总光激发的比例，例如对于alpha/重离子，可设置为1
-        //opticalPhysics->SetFiniteRiseTime(false);
-        //opticalPhysics->SetScintillationByParticleType(false); //这个参数表示闪烁光和入射粒子种类有关，目前G4可以加入的粒子种类有：电子，质子，氘核，氚核，氦核，碳核。因此需要对应的在Material里定义PROTON [DEUTERON, TRITON, ALPHA, ION, ELECTRON] SCINTILLATIONYIELD等。
-        //opticalPhysics->SetScintillationTrackInfo(false);
-        //opticalPhysics->SetTrackSecondariesFirst(kScintillation, true); //同上
-        //opticalPhysics->SetScintillationStackPhotons(true);
+        opticalPhysics->Configure(kScintillation, true); //闪烁光
+        opticalPhysics->SetScintillationYieldFactor(1.0); //这里是覆盖掉闪烁体材料定义里的YieldRatio。这个参数表示光产额里快成分占总光产额的比例。对于alpha重粒子和gamma/电子来说，这个比例会不一样。
+        opticalPhysics->SetScintillationExcitationRatio(0.0); //这个参数表示光产额里快成分激发占总光激发的比例，例如对于alpha/重离子，可设置为1
+        opticalPhysics->SetFiniteRiseTime(false);
+        opticalPhysics->SetScintillationByParticleType(false); //这个参数表示闪烁光和入射粒子种类有关，目前G4可以加入的粒子种类有：电子，质子，氘核，氚核，氦核，碳核。因此需要对应的在Material里定义PROTON [DEUTERON, TRITON, ALPHA, ION, ELECTRON] SCINTILLATIONYIELD等。
+        opticalPhysics->SetScintillationTrackInfo(true);
+        opticalPhysics->SetTrackSecondariesFirst(kScintillation, true); //同上
+        opticalPhysics->SetScintillationStackPhotons(true);
 
         //opticalPhysics->Configure(kAbsorption, true); //吸收
         //opticalPhysics->SetTrackSecondariesFirst(kAbsorption, true); //同上
@@ -207,11 +207,11 @@ MyPhysicsList::MyPhysicsList(MyDetectorConstruction *det) : G4VModularPhysicsLis
     // G4HadronPhysicsFTFP_BERT.cc      G4HadronPhysicsFTF_BIC.cc        G4HadronPhysicsQGSP_BERT_HP.cc   G4HadronPhysicsQGSP_FTFP_BERT.cc
     // G4HadronPhysicsFTFP_BERT_ATL.cc  G4HadronPhysicsINCLXX.cc         G4HadronPhysicsQGSP_BIC.cc       G4HadronPhysicsQGS_BIC.cc
     // G4HadronPhysicsFTFP_BERT_HP.cc   G4HadronPhysicsNuBeam.cc         G4HadronPhysicsQGSP_BIC_AllHP.cc G4HadronPhysicsShielding.cc
-    //RegisterPhysics(new G4HadronInelasticQBBC(verbose));
+//    RegisterPhysics(new G4HadronInelasticQBBC(verbose));
 
     //-- Ion physics
     // options: (ion_elastic)
-    //RegisterPhysics( new G4IonElasticPhysics(verbose));
+    RegisterPhysics( new G4IonElasticPhysics(verbose));
 
     // options: (ions_inelastic)
     // G4IonBinaryCascadePhysics.cc G4IonINCLXXPhysics.cc        G4IonPhysics.cc              G4IonPhysicsPHP.cc           G4IonQMDPhysics.cc
@@ -221,7 +221,7 @@ MyPhysicsList::MyPhysicsList(MyDetectorConstruction *det) : G4VModularPhysicsLis
     // options: (limiters)
     // G4FastSimulationPhysics.cc G4ImportanceBiasing.cc     G4MinEkineCuts.cc          G4ParallelWorldPhysics.cc  G4StepLimiterPhysics.cc
     // G4GenericBiasingPhysics.cc G4MaxTimeCuts.cc           G4NeutronTrackingCut.cc    G4SpecialCuts.cc           G4WeightWindowBiasing.cc
-    //RegisterPhysics( new G4NeutronTrackingCut(verbose));
+    RegisterPhysics( new G4NeutronTrackingCut(verbose));
     RegisterPhysics(new G4StepLimiterPhysics());
 
     // options: (stopping)

@@ -10,6 +10,7 @@
 <!ENTITY OptArGasMix SYSTEM "./Material/Predefined/Opticals/lists/OptArGasMix.xml">
 <!ENTITY OptC6F14 SYSTEM "./Material/Predefined/Opticals/lists/OptC6F14.xml">
 <!ENTITY OptQuartz SYSTEM "./Material/Predefined/Opticals/lists/OptQuartz.xml">
+<!ENTITY OptTEFLON SYSTEM "./Material/Predefined/Opticals/lists/OptTEFLON.xml">
 <!ENTITY ScinPolyethylene SYSTEM "./Material/Predefined/Scintillator/lists/ScinPolyethylene.xml">
 <!ENTITY ScinLXe SYSTEM "./Material/Predefined/Scintillator/lists/ScinLXe.xml">
 <!ENTITY OptAir SYSTEM "./Material/Predefined/Opticals/lists/OptAir.xml">
@@ -27,17 +28,21 @@
 	&ScinCsI;
 	&OptAir;
 	&ScinLXe;
+	&OptTEFLON;
 
 	<define>
 		<!-- CsI -->
 		<variable name="CsIX" value="15" />
 		<variable name="CsIY" value="22" />
 		<variable name="CsIZ" value="20" />
+		<variable name="TEFX" value="19" />
+		<variable name="TEFY" value="26" />
+		<variable name="TEFZ" value="24" />
 		<variable name="PMTX" value="15" />
 		<variable name="PMTY" value="10" />
 		<variable name="PMTZ" value="20" />
 		<position name="CsIpos" unit="mm" x="0" y="0" z="0"/>
-		<position name="PMTpos" unit="mm" x="0" y="CsIY/2+PMTY/2" z="0"/>
+		<position name="PMTpos" unit="mm" x="0" y="TEFY/2+PMTY/2" z="0"/>
 
 		<matrix name="REFLECTIVITY" coldim="2" values="1.65*eV 1.0" />
 		<matrix name="TRANSMITTANCE" coldim="2" values="1.65*eV 0.0" />
@@ -54,6 +59,7 @@
 		<box lunit="mm" name="world" x="100000" y="100000" z="100000" />
 		<box lunit="mm" name="CsIBox" x="CsIX" y="CsIY" z="CsIZ" />
 		<box lunit="mm" name="PMTBox" x="PMTX" y="PMTY" z="PMTZ" />
+		<box lunit="mm" name="TEFBox" x="TEFX" y="TEFY" z="TEFZ" />
 		<opticalsurface name="surf1" model="unified" finish="ground" type="dielectric_dielectric" value="0.5">
 			<property name="REFLECTIVITY" ref="REFLECTIVITY" />
 			<property name="TRANSMITTANCE" ref="TRANSMITTANCE" />
@@ -97,6 +103,16 @@
 			<auxiliary auxtype="setColor" auxvalue="kRed" auxunit="-4" />
 		</volume>
 
+		<volume name="TEFBoxVol">
+			<materialref ref="OptTEFLON" />
+			<solidref ref="TEFBox" />
+			<physvol name="CsILog">
+				<volumeref ref="CsIBoxVol" />
+				<positionref ref="CsIpos" />
+			</physvol>
+			<auxiliary auxtype="setColor" auxvalue="kRed" auxunit="-4" />
+		</volume>
+
 
 
 
@@ -105,12 +121,13 @@
 			<solidref ref="world" />
 
 
-
-
-			<physvol name="CsILog">
-				<volumeref ref="CsIBoxVol" />
-				<positionref ref="CsIpos" />
+			<physvol name="TEFLog">
+				<volumeref ref="TEFBoxVol" />
+				<positionref ref="CsIpos" /> <!--因为都是位于中央-->
 			</physvol>
+	
+
+			
 			<physvol name="PMTLog">
 				<volumeref ref="PMTBoxVol" />
 				<positionref ref="PMTpos" />
@@ -120,9 +137,16 @@
 		<skinsurface name="skinsrf1" surfaceproperty="surf1">
 		<volumeref ref="CsIBoxVol" />
 		</skinsurface>
+
 		<skinsurface name="skinsrf2" surfaceproperty="surf2">
 		<volumeref ref="PMTBoxVol" />
 		</skinsurface>
+
+		<skinsurface name="skinsrf3" surfaceproperty="surf1">
+		<volumeref ref="TEFBoxVol" />
+		</skinsurface>
+		
+
 	</structure>
 
 <!-- Exer0.0 设置入射粒子为光学光子来测试 

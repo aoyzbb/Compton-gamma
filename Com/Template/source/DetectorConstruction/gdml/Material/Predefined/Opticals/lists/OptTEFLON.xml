@@ -1,0 +1,48 @@
+<define>
+	<!-- ********** Refractive index begin ********** -->
+	<matrix name="OptTEFLON_RINDEX" coldim="2" values="
+		     1.55*eV             1.35
+                1.79505*eV          1.35
+                2.10499*eV          1.35
+                2.27077*eV          1.35
+                2.55111*eV          1.35
+                2.84498*eV          1.35
+                3.06361*eV          1.35
+                4.13281*eV          1.35
+                6.20*eV             1.35
+                6.526*eV            1.35
+                6.889*eV            1.35
+                7.294*eV            1.35
+                7.75*eV             1.35
+                8.267*eV            1.35
+                8.857*eV            1.35
+                9.538*eV            1.35
+                10.33*eV            1.35
+                15.5*eV             1.35" />
+
+	<!-- ********** Refractive index end ********** -->
+
+	<!-- ********** Absorption length begin ********** -->
+	<matrix name="OptTEFLON_ABS" coldim="2" values="
+			6.199*eV	800*cm
+			1.2398*eV	800*cm" />
+	<!-- ********** Absorption length end ********** -->
+
+	<!-- ********** Rayleigh scattering length begin ********** -->
+	<matrix name="OptTEFLON_RAY" coldim="2" values="
+			10.3317*eV	1000*cm
+			5.63545*eV	1000*cm" />
+	<!-- ********** Rayleigh scattering length end ********** -->
+
+</define>
+
+<materials>
+	<material formula="OptTEFLON"  name="OptTEFLON">
+		<property name="RINDEX" ref="OptTEFLON_RINDEX" />
+		<property name="ABSLENGTH" ref="OptTEFLON_ABS" />
+		<property name="RAYLEIGH" ref="OptTEFLON_RAY" />
+		<D value="2.2" />
+		<composite n="2" ref="elCarbon" />
+		<composite n="4" ref="elFluorine" />
+	</material>
+</materials>

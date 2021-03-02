@@ -88,7 +88,7 @@ void MyG4BasedAnalysis::BeginOfRunAction()
     // Creating ntuple
     //
     analysisManager->SetFirstNtupleId(1);
-    // 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间  2 PMT收集光子数
+    // 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间  2 PMT收集光子数及hadElastic数
     analysisManager->CreateNtuple("TrackCom", "Hits"); // ntuple Id = 1
 
     analysisManager->CreateNtupleDColumn("PX");
@@ -118,6 +118,11 @@ void MyG4BasedAnalysis::BeginOfRunAction()
 
     analysisManager->FinishNtuple();
 
+    analysisManager->CreateNtuple("hadElastic", "Hits"); // ntuple Id = 5
+    analysisManager->CreateNtupleDColumn("hadEla");
+
+
+    analysisManager->FinishNtuple();
     return;
 }
 
@@ -467,8 +472,8 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
 
     if (parentID == 0)
     {
-        if (aTrack->GetTrackStatus() != fStopAndKill) //只要track停止时的信息
-            return;
+        //if (aTrack->GetTrackStatus() != fStopAndKill) //只要track停止时的信息
+            //return;
 
         //G4cout << "==>"<<proName << G4endl;
         //if (proName != "eIoni") //只要电离过程
@@ -490,12 +495,22 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
 
         */
     }
+    
+    
     auto *pVolume = postStepPoint->GetTouchableHandle()->GetVolume();
     if (pVolume == NULL)
         return;
     auto *pVolume2 = preStepPoint->GetTouchableHandle()->GetVolume();
     G4LogicalVolume *presentVolume = pVolume->GetLogicalVolume();
     G4LogicalVolume *previousVolume = pVolume2->GetLogicalVolume();
+
+    //Ntuple2: 保存散射信息：
+    if(parentID==0&&proName=="hadElastic"&&presentVolume->GetName() == "CsIBoxVol"){
+        G4double postPtime = postStepPoint->GetGlobalTime();
+        auto analysisManager = G4AnalysisManager::Instance();
+        analysisManager->FillNtupleDColumn(5, 0, postPtime);
+        analysisManager->AddNtupleRow(5);
+    }
     //Ntuple2: 保存光子打在阳极板信息：
     if (charge == 0 && presentVolume->GetName() == "PMTBoxVol"&&previousVolume->GetName() == "CsIBoxVol") //要求来自入射粒子，且是光子
     {
