@@ -22,7 +22,7 @@
     <matrix name="ScinCsI_SciYield" coldim="1" values="12000./MeV" />
 
     <!-- ScinCsI Birks' constant -->
-    <matrix name="ScinCsI_BIRKS" coldim="1" values="0.126*mm/MeV" />
+    <matrix name="ScinCsI_BIRKS" coldim="1" values="0.065*mm/MeV" />
 
 
     <!-- ScinCsI scintillation spectrum 
@@ -173,14 +173,14 @@
     <matrix name="ScinCsI_Res" coldim="1" values="1.0" />
 
     <!-- ScinCsI scintillation fast and slow time constant -->
-    <matrix name="ScinCsI_FastTimeConst" coldim="1" values="20.*ns" />
+    <matrix name="ScinCsI_FastTimeConst" coldim="1" values="3.64*ns" />
 
      <matrix name="ScinCsI_RisingConst" coldim="1" values="0.0*ns" /> <!--Arbitray-->
 
-    <matrix name="ScinCsI_SlowTimeConst" coldim="1" values="45.00*ns" />
+    <matrix name="ScinCsI_SlowTimeConst" coldim="1" values="12.20*ns" />
 
     <!-- LAB scintillation fast component ratio -->
-    <matrix name="ScinCsI_YieldRatio" coldim="1" values="1.0" />
+    <matrix name="ScinCsI_YieldRatio" coldim="1" values="0.86" />
 
     <!-- ********** Scintillation end ********** -->
 
@@ -195,7 +195,7 @@
         <property name="FASTCOMPONENT" ref="ScinCsI_Fast" />
         <property name="FASTTIMECONSTANT" ref="ScinCsI_FastTimeConst" />
         <property name="ABSLENGTH" ref="ScinCsI_ABS" />
-<property name="FASTCINTILLATIONRISETIME" ref="ScinCsI_RisingConst" /> 
+        <property name="FASTCINTILLATIONRISETIME" ref="ScinCsI_RisingConst" /> 
         <property name="SLOWCOMPONENT" ref="ScinCsI_Slow" />
         <property name="SLOWTIMECONSTANT" ref="ScinCsI_SlowTimeConst" />
          <property name="SLOWSCINTILLATIONRISETIME" ref="ScinCsI_RisingConst" /> 
@@ -206,7 +206,12 @@
 
 
         <D value="4.53" />
+        <!--
         <composite n="1" ref="elCaesium" />
         <composite n="1" ref="elIodine" />
+        -->
+        <fraction n="0.9" ref="elCaesium" />
+        <fraction n="0.1" ref="elIodine" />
+        
     </material>
 </materials>

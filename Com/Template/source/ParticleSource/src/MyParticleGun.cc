@@ -37,10 +37,10 @@ MyParticleGun::MyParticleGun()
 
     //#PartGun 2. 初始化变量
     G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
-    G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
+    G4ParticleDefinition *particle = particleTable->FindParticle("neutron");
 
     fParticleGun->SetParticleDefinition(particle);
-    fParticleGun->SetParticleEnergy(356* keV);
+    fParticleGun->SetParticleEnergy(2*MeV);
     fParticleGun->SetParticlePosition(G4ThreeVector(0, 0, -20));
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0.0, 1.0));
 

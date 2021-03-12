@@ -12,7 +12,7 @@
 <!ENTITY OptQuartz SYSTEM "./Material/Predefined/Opticals/lists/OptQuartz.xml">
 <!ENTITY OptTEFLON SYSTEM "./Material/Predefined/Opticals/lists/OptTEFLON.xml">
 <!ENTITY ScinPolyethylene SYSTEM "./Material/Predefined/Scintillator/lists/ScinPolyethylene.xml">
-<!ENTITY ScinLXe SYSTEM "./Material/Predefined/Scintillator/lists/ScinLXe.xml">
+<!ENTITY ScinLS SYSTEM "./Material/Predefined/Scintillator/lists/ScinLS.xml">
 <!ENTITY OptAir SYSTEM "./Material/Predefined/Opticals/lists/OptAir.xml">
 <!ENTITY ScinCsI SYSTEM "./Material/Predefined/Scintillator/lists/ScinCsI.xml">
 ]>
@@ -27,7 +27,7 @@
 	&ScinPolyethylene;
 	&ScinCsI;
 	&OptAir;
-	&ScinLXe;
+	&ScinLS;
 	&OptTEFLON;
 
 	<define>
