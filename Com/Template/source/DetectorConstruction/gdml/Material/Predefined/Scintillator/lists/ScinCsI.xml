@@ -210,8 +210,8 @@
         <composite n="1" ref="elCaesium" />
         <composite n="1" ref="elIodine" />
         -->
-        <fraction n="0.9" ref="elCaesium" />
-        <fraction n="0.1" ref="elIodine" />
+        <fraction n="1" ref="elIodine" />
+        <fraction n="1" ref="elHydrogen" />
         
     </material>
 </materials>

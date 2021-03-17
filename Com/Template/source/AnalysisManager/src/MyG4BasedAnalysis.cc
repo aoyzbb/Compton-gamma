@@ -175,8 +175,8 @@ void MyG4BasedAnalysis::EndOfEventAction(const G4Event *)
 
     //-------
     //#ANALYSIS 5. 在Event结束的时候将数据保存到ntuple
-    G4cout << "the energy is " << ftotaledep << G4endl;
-    G4cout << "the track length is " << fTrkLen << G4endl;
+   // G4cout << "the energy is " << ftotaledep << G4endl;
+   // G4cout << "the track length is " << fTrkLen << G4endl;
     auto analysisManager = G4AnalysisManager::Instance();
     analysisManager->FillNtupleDColumn(3, 0, fTrkLen);
     analysisManager->FillNtupleDColumn(3, 5, ftotaledep);
@@ -327,8 +327,8 @@ void MyG4BasedAnalysis::PostTrackingAction(const G4Track *aTrack)
     //#ANALYSIS 4.3 在Tracking终止的时候保存相应数据
     endtime = aTrack->GetGlobalTime();
     G4double timeoftrack = begintime - endtime;
-    G4cout << "the begin time is " << begintime << G4endl;
-    G4cout << "the end time is " << endtime << G4endl;
+   // G4cout << "the begin time is " << begintime << G4endl;
+    //G4cout << "the end time is " << endtime << G4endl;
     auto analysisManager = G4AnalysisManager::Instance();
     analysisManager->FillNtupleDColumn(4, 0, begintime);
     analysisManager->FillNtupleDColumn(4, 1, endtime);
