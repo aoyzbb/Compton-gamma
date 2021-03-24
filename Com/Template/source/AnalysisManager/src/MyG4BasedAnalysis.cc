@@ -41,12 +41,16 @@ MyG4BasedAnalysis::MyG4BasedAnalysis()
     //#ANALYSIS 1. 初始化变量
     begintime = 0;
     endtime = 0;
+    travellingtime =0;
     fTrkLen = 0;
-    ftotaledep = 0;
+    Ecount = 0;
+    
+    //fElacount.clear();
     fEdeps.clear();
     fHitsX.clear();
     fHitsY.clear();
     fHitsZ.clear();
+    //ftotaledep=0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -88,7 +92,7 @@ void MyG4BasedAnalysis::BeginOfRunAction()
     // Creating ntuple
     //
     analysisManager->SetFirstNtupleId(1);
-    // 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间  2 PMT收集光子数及hadElastic数
+    // 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间  2 PMT收集光子数  5 弹性散射计数
     analysisManager->CreateNtuple("TrackCom", "Hits"); // ntuple Id = 1
 
     analysisManager->CreateNtupleDColumn("PX");
@@ -120,7 +124,7 @@ void MyG4BasedAnalysis::BeginOfRunAction()
 
     analysisManager->CreateNtuple("hadElastic", "Hits"); // ntuple Id = 5
     analysisManager->CreateNtupleDColumn("hadEla");
-
+    analysisManager->CreateNtupleDColumn("counts");
 
     analysisManager->FinishNtuple();
     return;
@@ -157,11 +161,16 @@ void MyG4BasedAnalysis::BeginOfEventAction(const G4Event *)
     //-------
     //#ANALYSIS 3. 初始化Event开始的参数
     fTrkLen = 0;
+    Ecount = 0;
     ftotaledep = 0;
+    begintime = 0;
+    endtime = 0;
+    travellingtime =0;
     fEdeps.clear();
     fHitsX.clear();
     fHitsY.clear();
     fHitsZ.clear();
+    
     return;
 }
 
@@ -181,6 +190,8 @@ void MyG4BasedAnalysis::EndOfEventAction(const G4Event *)
     analysisManager->FillNtupleDColumn(3, 0, fTrkLen);
     analysisManager->FillNtupleDColumn(3, 5, ftotaledep);
     analysisManager->AddNtupleRow(3);
+   analysisManager->FillNtupleDColumn(5, 1, Ecount);
+   analysisManager->AddNtupleRow(5);
 
     return;
 }
@@ -200,9 +211,9 @@ G4ClassificationOfNewTrack MyG4BasedAnalysis::ClassifyNewTrack(const G4Track *aT
     //if (aTrack->GetParticleDefinition() == G4Gamma::Gamma())
     //    return fKill;
 
-    auto analysisManager = G4AnalysisManager::Instance();
-    analysisManager->FillNtupleDColumn(4, 0, aTrack->GetKineticEnergy());
-    analysisManager->AddNtupleRow(4);
+   // auto analysisManager = G4AnalysisManager::Instance();
+   // analysisManager->FillNtupleDColumn(4, 0, aTrack->GetKineticEnergy());
+   // analysisManager->AddNtupleRow(4);
 
     return fUrgent;
 }
@@ -218,9 +229,7 @@ void MyG4BasedAnalysis::PreTrackingAction(const G4Track *aTrack)
     const G4ParticleDefinition *particle = aTrack->GetParticleDefinition();
     G4int pdgID = particle->GetPDGEncoding();
     G4String name = particle->GetParticleName();
-    //G4cout << "debug:the new particle is  " << name << G4endl;
-    //G4cout << "debug:the new particle's pid is  " << pdgID << G4endl;
-    begintime = aTrack->GetGlobalTime();
+    if(aTrack->GetParentID()==0)begintime = aTrack->GetLocalTime();
     G4ThreeVector momDir = aTrack->GetMomentumDirection(); //unit vector
     G4int parentID = aTrack->GetParentID();
     auto analysisManager = G4AnalysisManager::Instance();
@@ -325,15 +334,15 @@ void MyG4BasedAnalysis::PostTrackingAction(const G4Track *aTrack)
 
     //-------
     //#ANALYSIS 4.3 在Tracking终止的时候保存相应数据
-    endtime = aTrack->GetGlobalTime();
-    G4double timeoftrack = begintime - endtime;
-   // G4cout << "the begin time is " << begintime << G4endl;
-    //G4cout << "the end time is " << endtime << G4endl;
+    if(aTrack->GetParentID()==0){
+    endtime = aTrack->GetLocalTime();
+    travellingtime = begintime - endtime;
     auto analysisManager = G4AnalysisManager::Instance();
     analysisManager->FillNtupleDColumn(4, 0, begintime);
     analysisManager->FillNtupleDColumn(4, 1, endtime);
-    analysisManager->FillNtupleDColumn(4, 2, timeoftrack);
+    analysisManager->FillNtupleDColumn(4, 2, travellingtime);
     analysisManager->AddNtupleRow(4);
+    }
     return;
 }
 
@@ -504,13 +513,17 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
     G4LogicalVolume *presentVolume = pVolume->GetLogicalVolume();
     G4LogicalVolume *previousVolume = pVolume2->GetLogicalVolume();
 
-    //Ntuple2: 保存散射信息：
+    //Ntuple5: 利用Ecount对弹性散射计数,仅适用中子：
     if(parentID==0&&proName=="hadElastic"&&presentVolume->GetName() == "CsIBoxVol"){
         G4double postPtime = postStepPoint->GetGlobalTime();
         auto analysisManager = G4AnalysisManager::Instance();
         analysisManager->FillNtupleDColumn(5, 0, postPtime);
-        analysisManager->AddNtupleRow(5);
+    //    analysisManager->AddNtupleRow(5);
+        Ecount++;
+         G4cout<<"@AO::debug2:Ecount"<<Ecount<<G4endl;
     }
+
+
     //Ntuple2: 保存光子打在阳极板信息：
     if (charge == 0 && presentVolume->GetName() == "PMTBoxVol"&&previousVolume->GetName() == "CsIBoxVol") //要求来自入射粒子，且是光子
     {

@@ -207,7 +207,7 @@ MyPhysicsList::MyPhysicsList(MyDetectorConstruction *det) : G4VModularPhysicsLis
     // G4HadronPhysicsFTFP_BERT.cc      G4HadronPhysicsFTF_BIC.cc        G4HadronPhysicsQGSP_BERT_HP.cc   G4HadronPhysicsQGSP_FTFP_BERT.cc
     // G4HadronPhysicsFTFP_BERT_ATL.cc  G4HadronPhysicsINCLXX.cc         G4HadronPhysicsQGSP_BIC.cc       G4HadronPhysicsQGS_BIC.cc
     // G4HadronPhysicsFTFP_BERT_HP.cc   G4HadronPhysicsNuBeam.cc         G4HadronPhysicsQGSP_BIC_AllHP.cc G4HadronPhysicsShielding.cc
-//    RegisterPhysics(new G4HadronInelasticQBBC(verbose));
+    RegisterPhysics(new G4HadronInelasticQBBC(verbose));
 
     //-- Ion physics
     // options: (ion_elastic)

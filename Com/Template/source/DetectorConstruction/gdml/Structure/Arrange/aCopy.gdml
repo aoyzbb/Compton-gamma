@@ -44,7 +44,7 @@
 		<position name="CsIpos" unit="mm" x="0" y="0" z="0"/>
 		<position name="PMTpos" unit="mm" x="0" y="TEFY/2+PMTY/2" z="0"/>
 
-		<matrix name="REFLECTIVITY" coldim="2" values="1.65*eV 1.0" />
+		<matrix name="REFLECTIVITY" coldim="2" values="1.65*eV 0.93" />
 		<matrix name="TRANSMITTANCE" coldim="2" values="1.65*eV 0.0" />
 		<matrix name="EFFICIENCY" coldim="2" values="1.65*eV 1.0" />
 		<matrix name="SURFACEROUGHNESS" coldim="1" values="0.01" />
@@ -53,6 +53,8 @@
 		<matrix name="BACKSCATTERCONSTANT" coldim="2" values="1.65*eV 0.0" />
 		<matrix name="REFLECTIVITY2" coldim="2" values="1.65*eV 0.0" />
 		<matrix name="TRANSMITTANCE2" coldim="2" values="1.65*eV 1.0" />
+
+		
 	</define>
 
 	<solids>
@@ -60,6 +62,8 @@
 		<box lunit="mm" name="CsIBox" x="CsIX" y="CsIY" z="CsIZ" />
 		<box lunit="mm" name="PMTBox" x="PMTX" y="PMTY" z="PMTZ" />
 		<box lunit="mm" name="TEFBox" x="TEFX" y="TEFY" z="TEFZ" />
+
+		<!--
 		<opticalsurface name="surf1" model="unified" finish="ground" type="dielectric_dielectric" value="0.5">
 			<property name="REFLECTIVITY" ref="REFLECTIVITY" />
 			<property name="TRANSMITTANCE" ref="TRANSMITTANCE" />
@@ -69,6 +73,12 @@
 			<property name="SPECULARSPIKECONSTANT" ref="SPECULARSPIKECONSTANT" />
 			<property name="BACKSCATTERCONSTANT" ref="BACKSCATTERCONSTANT" />
 		</opticalsurface>
+		-->
+
+		<opticalsurface name="surf1" model="DAVIS" finish="PolishedTeflon_LUT" type="dielectric_LUT" value="1.0">
+            <property name="REFLECTIVITY" ref="REFLECTIVITY" />
+            <property name="TRANSMITTANCE" ref="TRANSMITTANCE" />
+        </opticalsurface>
 
 		<opticalsurface name="surf2" model="unified" finish="ground" type="dielectric_dielectric" value="0.5">
 			<property name="REFLECTIVITY" ref="REFLECTIVITY2" />
@@ -81,14 +91,7 @@
 		</opticalsurface>
 	
 	</solids>
-	<!--
-	<solids>
-		<box lunit="mm" name="world" x="10000" y="10000" z="10000" />
-		<box lunit="mm" name="CsIBox" x="400" y="440" z="265" />
-		<box lunit="mm" name="BoraBox" x="500" y="500" z="543" />
-		
-	</solids>
--->
+
 	<structure>
 		<volume name="CsIBoxVol">
 			<materialref ref="ScinCsI" />
@@ -134,18 +137,28 @@
 			</physvol>
 		</volume>
 
-		<skinsurface name="skinsrf1" surfaceproperty="surf1">
-		<volumeref ref="CsIBoxVol" />
-		</skinsurface>
-
+		<bordersurface name="bordersrf1" surfaceproperty="surf1">
+            <physvolref ref="CsILog" />
+            <physvolref ref="TEFLog" />
+        </bordersurface>
+		
+		
 		<skinsurface name="skinsrf2" surfaceproperty="surf2">
 		<volumeref ref="PMTBoxVol" />
 		</skinsurface>
 
+
+<!--
+		<skinsurface name="skinsrf1" surfaceproperty="surf1">
+		<volumeref ref="CsIBoxVol" />
+		</skinsurface>
+
+		
+
 		<skinsurface name="skinsrf3" surfaceproperty="surf1">
 		<volumeref ref="TEFBoxVol" />
 		</skinsurface>
-		
+	-->	
 
 	</structure>
 

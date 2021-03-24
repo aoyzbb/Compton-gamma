@@ -53,12 +53,16 @@ private:
 private:
     double fTrkLen;
     double ftotaledep;
+    double Ecount;
+    
     G4double begintime;
     G4double endtime;
+    G4double travellingtime;
     std::vector<double> fEdeps;
     std::vector<double> fHitsX;
     std::vector<double> fHitsY;
     std::vector<double> fHitsZ;
+
 };
 
 #endif
