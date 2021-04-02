@@ -94,8 +94,8 @@ void MyParticleGun::GeneratePrimaries(G4Event *anEvent)
     //#PartGun 3. 对粒子枪进行抽样
     if (GunType == 0)
     {
-         fParticleGun->SetParticlePosition(G4ThreeVector(G4UniformRand()*2-1, G4UniformRand()*2-1, -132.8));
-        fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1));   
+         fParticleGun->SetParticlePosition(G4ThreeVector(G4UniformRand()*2-1, G4UniformRand()*2-1, -13.8));
+        fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1));  
         //单粒子控制, 可配合随机抽样函数来进行： G4UniformRand()给出[0~1]随机数
     }
     else

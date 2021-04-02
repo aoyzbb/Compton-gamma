@@ -36,12 +36,13 @@
 		<variable name="CsIY" value="22" />
 		<variable name="CsIZ" value="20" />
 		<variable name="TEFX" value="19" />
-		<variable name="TEFY" value="26" />
+		<variable name="TEFY" value="24" />
 		<variable name="TEFZ" value="24" />
 		<variable name="PMTX" value="15" />
 		<variable name="PMTY" value="10" />
 		<variable name="PMTZ" value="20" />
-		<position name="CsIpos" unit="mm" x="0" y="0" z="0"/>
+		<position name="CsIpos" unit="mm" x="0" y="1" z="0"/>
+		<position name="TEFpos" unit="mm" x="0" y="0" z="0"/>
 		<position name="PMTpos" unit="mm" x="0" y="TEFY/2+PMTY/2" z="0"/>
 
 		<matrix name="REFLECTIVITY" coldim="2" values="1.65*eV 0.93" />
@@ -59,9 +60,11 @@
 
 	<solids>
 		<box lunit="mm" name="world" x="100000" y="100000" z="100000" />
-		<box lunit="mm" name="CsIBox" x="CsIX" y="CsIY" z="CsIZ" />
+		<!--tube lunit="mm" name="CsIBox" rmin="0" rmax="CsIY" z="CsIZ" deltaphi="360"/-->
 		<box lunit="mm" name="PMTBox" x="PMTX" y="PMTY" z="PMTZ" />
+		<box lunit="mm" name="CsIBox" x="CsIX" y="CsIY" z="CsIZ" />
 		<box lunit="mm" name="TEFBox" x="TEFX" y="TEFY" z="TEFZ" />
+		<!--tube lunit="mm" name="TEFBox" rmin="0" rmax="TEFY" z="TEFZ" deltaphi="360" /-->
 
 		<!--
 		<opticalsurface name="surf1" model="unified" finish="ground" type="dielectric_dielectric" value="0.5">
@@ -113,7 +116,7 @@
 				<volumeref ref="CsIBoxVol" />
 				<positionref ref="CsIpos" />
 			</physvol>
-			<auxiliary auxtype="setColor" auxvalue="kRed" auxunit="-4" />
+			<auxiliary auxtype="setColor" auxvalue="kBlue" auxunit="-4" />
 		</volume>
 
 
@@ -126,7 +129,7 @@
 
 			<physvol name="TEFLog">
 				<volumeref ref="TEFBoxVol" />
-				<positionref ref="CsIpos" /> <!--因为都是位于中央-->
+				<positionref ref="TEFpos" /> 
 			</physvol>
 	
 

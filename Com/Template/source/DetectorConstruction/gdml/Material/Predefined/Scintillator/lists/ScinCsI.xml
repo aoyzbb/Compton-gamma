@@ -19,7 +19,7 @@
     <!-- ********** Scintillation ********** -->
 
     <!-- ScinCsI scintillation yield, include QE~20% -->
-    <matrix name="ScinCsI_SciYield" coldim="1" values="12000./MeV" />
+    <matrix name="ScinCsI_SciYield" coldim="1" values="8000./MeV" />
 
     <!-- ScinCsI Birks' constant -->
     <matrix name="ScinCsI_BIRKS" coldim="1" values="0.065*mm/MeV" />

@@ -92,7 +92,7 @@ void MyG4BasedAnalysis::BeginOfRunAction()
     // Creating ntuple
     //
     analysisManager->SetFirstNtupleId(1);
-    // 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间  2 PMT收集光子数  5 弹性散射计数
+    //@AO 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间  2 PMT收集光子数  5 弹性散射计数
     analysisManager->CreateNtuple("TrackCom", "Hits"); // ntuple Id = 1
 
     analysisManager->CreateNtupleDColumn("PX");
@@ -229,7 +229,11 @@ void MyG4BasedAnalysis::PreTrackingAction(const G4Track *aTrack)
     const G4ParticleDefinition *particle = aTrack->GetParticleDefinition();
     G4int pdgID = particle->GetPDGEncoding();
     G4String name = particle->GetParticleName();
-    if(aTrack->GetParentID()==0)begintime = aTrack->GetLocalTime();
+    if(aTrack->GetParentID() == 0&&aTrack->GetCurrentStepNumber() == 0){    
+        
+        begintime = aTrack->GetLocalTime();
+        
+    }
     G4ThreeVector momDir = aTrack->GetMomentumDirection(); //unit vector
     G4int parentID = aTrack->GetParentID();
     auto analysisManager = G4AnalysisManager::Instance();
@@ -334,9 +338,9 @@ void MyG4BasedAnalysis::PostTrackingAction(const G4Track *aTrack)
 
     //-------
     //#ANALYSIS 4.3 在Tracking终止的时候保存相应数据
-    if(aTrack->GetParentID()==0){
+    if(aTrack->GetParentID() == 0 && aTrack->GetTrackStatus() == fStopAndKill){
     endtime = aTrack->GetLocalTime();
-    travellingtime = begintime - endtime;
+    travellingtime = endtime - begintime;
     auto analysisManager = G4AnalysisManager::Instance();
     analysisManager->FillNtupleDColumn(4, 0, begintime);
     analysisManager->FillNtupleDColumn(4, 1, endtime);
@@ -520,12 +524,14 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
         analysisManager->FillNtupleDColumn(5, 0, postPtime);
     //    analysisManager->AddNtupleRow(5);
         Ecount++;
-         G4cout<<"@AO::debug2:Ecount"<<Ecount<<G4endl;
+        // G4cout<<"@AO::debug2:Ecount"<<Ecount<<G4endl;
     }
 
+    
 
+     G4String name = particle->GetParticleName();
     //Ntuple2: 保存光子打在阳极板信息：
-    if (charge == 0 && presentVolume->GetName() == "PMTBoxVol"&&previousVolume->GetName() == "CsIBoxVol") //要求来自入射粒子，且是光子
+    if (name == "opticalphoton" && presentVolume->GetName() == "PMTBoxVol"&&previousVolume->GetName() == "CsIBoxVol") //要求来自入射粒子，且是光子
     {
         // if (proName != "Cerenkov") //只要切伦科夫过程
         //   return;
@@ -552,6 +558,7 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
 
         */
         fKill;
+     //   G4cout<<"I kill"<<G4endl;
     }
     G4double stepenergy = aStep->GetTotalEnergyDeposit();
 
