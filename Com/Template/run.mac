@@ -3,7 +3,7 @@
 /run/verbose 0
 /vis/verbose 0
 /process/verbose 0
-/tracking/verbose 1
+/tracking/verbose 0
 #
 #/globalField/setValue 1.0 0 0 tesla
 #
@@ -33,4 +33,4 @@
 /gun/direction 0 0 1
 #/process/eLoss/verbose 0
 #
-/run/beamOn 100
+/run/beamOn 10000

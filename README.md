@@ -23,6 +23,40 @@
 
 ---
 ### 更新
+#### 2021/4/12
+更改TELFLON厚度,取为0.2*4=0.8mm,更改PMT,更改探测器位置  
+更改飞行时间的取数方式
+尝试$3\times10^5$个事例数,并记录多次散射
+
+
+#### 2021/4/07
+&emsp; 更改结构和入射中子能谱(32.6度厚靶D-D中子能谱)以使模拟更符合实际情况,加入探测器,内容物为液闪,5.2cm直径,厚度约5cm"Material components of the EJ301 scintillator were H and C (ratio of atoms is 1.212, density of the scintillator is 0.874 g/cm3). The scintillator was filled into a 5 cm in diameter and 20 cm in height cylindrical vessel with 0.5 mm thick aluminum. The light pipe and PMT were ignored."
+
+ref:Su-Ya-La-Tu, Zhang & Chen, Zhiqiang & Rui, Han & Xing-Quan, Liu & Wada, Roy & Wei-Ping, Lin & Zeng-Xue, Jin & Yin-Yin, Xi & Jian-Li, Liu & Fu-Dong, Shi. (2013). Study on gamma response function of EJ301 organic liquid scintillator with GEANT4 and FLUKA. Chinese Physics C. 37. 10.1088/1674-1137/37/12/126003. 
+&emsp; 注意到液闪没有加入闪烁功能,因为没有发光光谱.仅保留计数功能.故模拟粒子鉴别尚无法做到
+&emsp; 更改视角及PMT的位置 z = 22,  x= 20 ,y =15, PMT在y上累加,但是视角为(0,0,-1),令x轴向上,z轴垂直纸面向外
+&emsp; 更改存数方式,飞行时间(从射入CsI开始计时,射入探测器终止计时),每个探测器计数
+&emsp;一个有意思的点是在G4Analysis Manager中
+
+```
+    const G4Track *aTrack = aStep->GetTrack();
+    ...
+    aStep->GetTrack()->SetTrackStatus(fStopAndKill);
+```
+其中第二步不可替换为
+```
+ aTrack->G4Track::SetTrackStatus(fStopAndKill);
+```
+因为在~/geant4.10.6-install/include/Geant4/G4Step.icc中
+```
+inline 
+ G4Track* G4Step::GetTrack() const
+ { 
+   return fpTrack; 
+ }
+   
+```
+返回的被const限定,这一点在第一步中亦有体现.
 #### 2021/4/02
 &emsp;加入飞行时间探测(实验室系),注意默认单位为nm.解决PMT计数为0的bug.原因是加入TEFLON后TEFLON尺寸不对,即没有让CsI与PMT直接接触
 &emsp;附注:几何体结构  /vis/scene/add/axes    # Simple axes: x=red(15mm), y=green(22mm), z=blue(20mm)(CsI)  即x沿纸面向里,y向上,入射方向为z,  y向上叠加PMT, 除顶部PMT外均覆盖有2mmTEFLON

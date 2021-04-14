@@ -418,6 +418,13 @@
 <!--#AO-->
 	</material>
 
+	<material name="ScinEJ301">
+		<D value="0.874" />
+		<fraction n="0.908" ref="elCarbon" />
+		<fraction n="0.092" ref="elHydrogen" />
+		<!--atoms:H:C=1.212:1. mass:1.212:12-->
+</material>
+
 	<material name="MineralOil">
 		<D value="0.8511" />
 		<fraction n="0.86475" ref="elCarbon" />

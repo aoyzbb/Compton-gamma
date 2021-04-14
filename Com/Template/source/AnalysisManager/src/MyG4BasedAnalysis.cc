@@ -12,7 +12,7 @@
 #include "G4AntiNeutrinoTau.hh"
 
 #include "G4ProcessType.hh"
-//fNotDefined, fTransportation, fElectromagnetic, fOptical, fHadronic, fPhotolepton_hadron,
+//fNotDefined, fTransportation, fElectromagnetic, fOptical, fHadronic, f otolepton_hadron,
 //fDecay, fGeneral, fParameterisation, fUserDefined, fParallel, fPhonon, fUCN
 #include "G4DecayProcessType.hh"
 //DECAY, DECAY_WithSpin, DECAY_PionMakeSpin, DECAY_Radioactive, DECAY_Unknown, DECAY_External
@@ -44,6 +44,8 @@ MyG4BasedAnalysis::MyG4BasedAnalysis()
     travellingtime =0;
     fTrkLen = 0;
     Ecount = 0;
+    flag_begin = 0;
+    flag_end = 0;
     
     //fElacount.clear();
     fEdeps.clear();
@@ -92,7 +94,8 @@ void MyG4BasedAnalysis::BeginOfRunAction()
     // Creating ntuple
     //
     analysisManager->SetFirstNtupleId(1);
-    //@AO 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间  2 PMT收集光子数  5 弹性散射计数
+    //@AO 1 px,py,pz散射角 , 3 totalenergy能量沉积  4 时间及各个探测器计数  2 PMT收集光子数  5 弹性散射计数
+    //@AO column 从0开始计数
     analysisManager->CreateNtuple("TrackCom", "Hits"); // ntuple Id = 1
 
     analysisManager->CreateNtupleDColumn("PX");
@@ -119,6 +122,8 @@ void MyG4BasedAnalysis::BeginOfRunAction()
     analysisManager->CreateNtupleDColumn("begintime");
     analysisManager->CreateNtupleDColumn("endtime");
     analysisManager->CreateNtupleDColumn("travellingtime");
+   
+   
 
     analysisManager->FinishNtuple();
 
@@ -126,6 +131,13 @@ void MyG4BasedAnalysis::BeginOfRunAction()
     analysisManager->CreateNtupleDColumn("hadEla");
     analysisManager->CreateNtupleDColumn("counts");
 
+    analysisManager->FinishNtuple();
+
+    analysisManager->CreateNtuple("Det", "Hits"); // ntuple Id = 6
+    analysisManager->CreateNtupleDColumn("energydeposit"); 
+    analysisManager->CreateNtupleDColumn("DetX");
+    analysisManager->CreateNtupleDColumn("DetY");
+    analysisManager->CreateNtupleDColumn("DetZ");
     analysisManager->FinishNtuple();
     return;
 }
@@ -170,7 +182,8 @@ void MyG4BasedAnalysis::BeginOfEventAction(const G4Event *)
     fHitsX.clear();
     fHitsY.clear();
     fHitsZ.clear();
-    
+    flag_begin = 0;
+    flag_end = 0;
     return;
 }
 
@@ -192,6 +205,9 @@ void MyG4BasedAnalysis::EndOfEventAction(const G4Event *)
     analysisManager->AddNtupleRow(3);
    analysisManager->FillNtupleDColumn(5, 1, Ecount);
    analysisManager->AddNtupleRow(5);
+
+   
+  
 
     return;
 }
@@ -229,11 +245,11 @@ void MyG4BasedAnalysis::PreTrackingAction(const G4Track *aTrack)
     const G4ParticleDefinition *particle = aTrack->GetParticleDefinition();
     G4int pdgID = particle->GetPDGEncoding();
     G4String name = particle->GetParticleName();
-    if(aTrack->GetParentID() == 0&&aTrack->GetCurrentStepNumber() == 0){    
+    //if(aTrack->GetParentID() == 0&&aTrack->GetCurrentStepNumber() == 0){    
         
-        begintime = aTrack->GetLocalTime();
+      //begintime = aTrack->GetLocalTime();  
         
-    }
+    //}
     G4ThreeVector momDir = aTrack->GetMomentumDirection(); //unit vector
     G4int parentID = aTrack->GetParentID();
     auto analysisManager = G4AnalysisManager::Instance();
@@ -338,16 +354,10 @@ void MyG4BasedAnalysis::PostTrackingAction(const G4Track *aTrack)
 
     //-------
     //#ANALYSIS 4.3 在Tracking终止的时候保存相应数据
-    if(aTrack->GetParentID() == 0 && aTrack->GetTrackStatus() == fStopAndKill){
-    endtime = aTrack->GetLocalTime();
-    travellingtime = endtime - begintime;
-    auto analysisManager = G4AnalysisManager::Instance();
-    analysisManager->FillNtupleDColumn(4, 0, begintime);
-    analysisManager->FillNtupleDColumn(4, 1, endtime);
-    analysisManager->FillNtupleDColumn(4, 2, travellingtime);
-    analysisManager->AddNtupleRow(4);
-    }
+
+
     return;
+    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -533,8 +543,6 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
     //Ntuple2: 保存光子打在阳极板信息：
     if (name == "opticalphoton" && presentVolume->GetName() == "PMTBoxVol"&&previousVolume->GetName() == "CsIBoxVol") //要求来自入射粒子，且是光子
     {
-        // if (proName != "Cerenkov") //只要切伦科夫过程
-        //   return;
         //G4cout<<"Hi,I Hit!"<<G4endl;
         G4double engtot = aTrack->GetTotalEnergy(); // total energy (including m0)
         auto analysisManager = G4AnalysisManager::Instance();
@@ -557,8 +565,40 @@ void MyG4BasedAnalysis::SteppingAction(const G4Step *aStep)
         analysisManager->AddNtupleRow(2);
 
         */
-        fKill;
+       
      //   G4cout<<"I kill"<<G4endl;
+     if(flag_begin == 0){
+         begintime = aTrack->GetLocalTime();
+         flag_begin = 1;
+     }
+      aStep->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+    if(name == "neutron" && presentVolume->GetName() == "DetTubeVol"){
+        G4double optX = postPos.x();
+        G4double optY = postPos.y();
+        G4double optZ = postPos.z();
+        G4double optEng = aTrack->GetKineticEnergy();
+        auto analysisManager = G4AnalysisManager::Instance();
+        analysisManager->FillNtupleDColumn(6, 0, optEng);
+        analysisManager->FillNtupleDColumn(6, 1, optX);
+        analysisManager->FillNtupleDColumn(6, 2, optY);
+        analysisManager->FillNtupleDColumn(6, 3, optZ);
+        analysisManager->AddNtupleRow(6);
+
+        if(flag_end == 0){
+        endtime = aTrack->GetLocalTime();
+        travellingtime = endtime - begintime;
+        flag_end = 1;
+          
+
+        auto analysisManager = G4AnalysisManager::Instance();
+        analysisManager->FillNtupleDColumn(4, 0, begintime);
+        analysisManager->FillNtupleDColumn(4, 1, endtime);
+        analysisManager->FillNtupleDColumn(4, 2, travellingtime);
+        analysisManager->AddNtupleRow(4);
+    
+        }
+        aStep->GetTrack()->SetTrackStatus(fStopAndKill);
     }
     G4double stepenergy = aStep->GetTotalEnergyDeposit();
 

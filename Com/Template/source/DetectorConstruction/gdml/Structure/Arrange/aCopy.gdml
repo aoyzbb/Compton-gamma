@@ -35,13 +35,17 @@
 		<variable name="CsIX" value="15" />
 		<variable name="CsIY" value="22" />
 		<variable name="CsIZ" value="20" />
-		<variable name="TEFX" value="19" />
-		<variable name="TEFY" value="24" />
-		<variable name="TEFZ" value="24" />
-		<variable name="PMTX" value="15" />
+		<variable name="TEFX" value="16.6" />
+		<variable name="TEFY" value="22.8" />
+		<variable name="TEFZ" value="21.6" />
+		<variable name="PMTX" value="20" />
 		<variable name="PMTY" value="10" />
-		<variable name="PMTZ" value="20" />
-		<position name="CsIpos" unit="mm" x="0" y="1" z="0"/>
+		<variable name="PMTZ" value="22" />
+		<variable name="DetR" value="26" />
+		<variable name="DetH" value="50" />
+
+		<variable name="i" value="0" />
+		<position name="CsIpos" unit="mm" x="0" y="0.4" z="0"/>
 		<position name="TEFpos" unit="mm" x="0" y="0" z="0"/>
 		<position name="PMTpos" unit="mm" x="0" y="TEFY/2+PMTY/2" z="0"/>
 
@@ -54,6 +58,8 @@
 		<matrix name="BACKSCATTERCONSTANT" coldim="2" values="1.65*eV 0.0" />
 		<matrix name="REFLECTIVITY2" coldim="2" values="1.65*eV 0.0" />
 		<matrix name="TRANSMITTANCE2" coldim="2" values="1.65*eV 1.0" />
+		<matrix name="pos" coldim="8" values="0 5 10 15 20 27.6 37 47.7
+											  3300 3311 3342 3412 3355 3150 3382 3306" />
 
 		
 	</define>
@@ -64,7 +70,7 @@
 		<box lunit="mm" name="PMTBox" x="PMTX" y="PMTY" z="PMTZ" />
 		<box lunit="mm" name="CsIBox" x="CsIX" y="CsIY" z="CsIZ" />
 		<box lunit="mm" name="TEFBox" x="TEFX" y="TEFY" z="TEFZ" />
-		<!--tube lunit="mm" name="TEFBox" rmin="0" rmax="TEFY" z="TEFZ" deltaphi="360" /-->
+		<tube lunit="mm" name="DetTube" rmin="0" rmax="DetR" z="DetH" deltaphi="360" />
 
 		<!--
 		<opticalsurface name="surf1" model="unified" finish="ground" type="dielectric_dielectric" value="0.5">
@@ -96,6 +102,13 @@
 	</solids>
 
 	<structure>
+	   <volume name="DetTubeVol">
+            <materialref ref="ScinEJ301" />
+            <solidref ref="DetTube" />
+           
+            
+        </volume>
+
 		<volume name="CsIBoxVol">
 			<materialref ref="ScinCsI" />
 			<solidref ref="CsIBox" />
@@ -133,7 +146,23 @@
 			</physvol>
 	
 
-			
+		<loop for="i" from="1" to="8" step="1">
+                <physvol name="RICH[i]">
+                    <volumeref ref="DetTubeVol" />
+                    <position x="0" y="pos[2,i]*sin(pos[1,i]*pi/180)" z="pos[2,i]*cos(pos[1,i]*pi/180)" unit="mm" />
+                    <rotation x="pos[1,i]" y="0." z="0." unit="deg" />
+                </physvol>
+            </loop>
+
+			<!--loop for="i" from="0" to="11" step="1">
+                <physvol name="RICH[i]">
+                    <volumeref ref="DetTubeVol" />
+                    <position x="0" y="DetL*sin(i*pi/24)" z="DetL*cos(i*pi/24)" unit="mm" />
+                    <rotation x="i*7.5" y="0." z="0." unit="deg" />
+                </physvol>
+            </loop-->
+
+			 	
 			<physvol name="PMTLog">
 				<volumeref ref="PMTBoxVol" />
 				<positionref ref="PMTpos" />

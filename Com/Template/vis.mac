@@ -33,7 +33,8 @@
 
 #
 # Specify view angle:
-/vis/viewer/set/viewpointVector -1 0 0
+/vis/viewer/set/viewpointVector 0 0 -1
+/vis/viewer/set/upVector 1 0 0
 /vis/viewer/set/lightsVector -1 0 0
 #
 # Specify style (surface, wireframe, auxiliary edges,...)

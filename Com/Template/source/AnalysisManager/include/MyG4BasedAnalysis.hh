@@ -54,6 +54,8 @@ private:
     double fTrkLen;
     double ftotaledep;
     double Ecount;
+    double flag_begin;
+    double flag_end;
     
     G4double begintime;
     G4double endtime;

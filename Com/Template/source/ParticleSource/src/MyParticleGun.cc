@@ -36,6 +36,10 @@ MyParticleGun::MyParticleGun()
     fParticleGun = new G4ParticleGun(n_particle);
 
     //#PartGun 2. 初始化变量
+
+    file = new TFile("neutronFlux.root");
+    engHist = (TH1F *)file->Get("fhist");
+
     G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
     G4ParticleDefinition *particle = particleTable->FindParticle("neutron");
 
@@ -94,7 +98,9 @@ void MyParticleGun::GeneratePrimaries(G4Event *anEvent)
     //#PartGun 3. 对粒子枪进行抽样
     if (GunType == 0)
     {
-         fParticleGun->SetParticlePosition(G4ThreeVector(G4UniformRand()*2-1, G4UniformRand()*2-1, -13.8));
+        double eng = engHist->GetRandom();
+        fParticleGun->SetParticleEnergy(eng);
+         fParticleGun->SetParticlePosition(G4ThreeVector(G4UniformRand()*20-10, G4UniformRand()*20-10, -13.8));
         fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1));  
         //单粒子控制, 可配合随机抽样函数来进行： G4UniformRand()给出[0~1]随机数
     }
